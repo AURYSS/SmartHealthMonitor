@@ -24,4 +24,17 @@
         </activity>
     </application>
 
+    <!-- AndroidManifest.xml — dentro de <application> -->
+    <service android:name=".data.WearListenerService"
+        android:exported="true"
+        tools:ignore="MissingClass">
+        <intent-filter>
+            <action android:name=
+                "com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+            <data android:scheme="wear"               android:host="*"
+                android:pathPrefix="/smarthealthmonitor" />
+        </intent-filter>
+    </service>
+
+
 </manifest>
