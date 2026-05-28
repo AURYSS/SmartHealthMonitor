@@ -21,25 +21,19 @@ import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.ui.platform.LocalConfiguration
+import mx.utng.carh.smarthealthmonitor.navigation.SmartHealthNavGraph
+import mx.utng.carh.smarthealthmonitor.ui.components.TarjetaDato
+import mx.utng.carh.smarthealthmonitor.ui.theme.SmartHealthMonitorTheme
 
 
 class MainActivity : ComponentActivity() {
 
+    // MainActivity.kt — reemplazar el setContent existente
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
-            SmartHealthMonitorTheme {
-
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    LoginScreen(
-                        onLoginSuccess = {
-                            // TODO sesión 5: navegar al Dashboard
-                            Log.d("SmartHealth", "Login exitoso")
-                        }
-                    )
-                }
-            }
+            // NavGraph es ahora el punto de entrada — no LoginScreen directamente
+            SmartHealthNavGraph()
         }
     }
 
@@ -299,6 +293,22 @@ fun LandscapeLayout(
                 }
             }
         }
+
+        TarjetaDato(
+            valor = frecuenciaCardiaca.toString(),
+            unidad = "bpm",
+            label = "Frecuencia cardíaca",
+            colorValor = MaterialTheme.colorScheme.error
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        TarjetaDato(
+            valor = "%,d".format(pasos),
+            unidad = "pasos",
+            label = "Pasos del día",
+            colorValor = MaterialTheme.colorScheme.primary
+        )
 
         // Botón alerta
         Button(

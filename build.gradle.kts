@@ -5,7 +5,7 @@ plugins {
 }
 /*
 dependencies {
-    // Para los iconos básicos
+     Para los iconos básicos
     implementation("androidx.compose.material:material-icons-core")
 
     // Para el catálogo completo (aquí es donde vive la mayoría)

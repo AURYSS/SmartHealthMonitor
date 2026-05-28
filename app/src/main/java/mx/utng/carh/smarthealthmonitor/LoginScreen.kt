@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
+import mx.utng.carh.smarthealthmonitor.ui.theme.SmartHealthMonitorTheme
 @Composable
 fun LoginScreen(onLoginSuccess: () -> Unit = {}) {
     // TODO 1: Declarar estado para email, password, isLoading

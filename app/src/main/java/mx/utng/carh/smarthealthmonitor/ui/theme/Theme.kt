@@ -1,5 +1,5 @@
-package mx.utng.carh.smarthealthmonitor
-import android.app.Activity
+package mx.utng.carh.smarthealthmonitor.ui.theme
+
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -7,94 +7,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import com.example.compose.SHBackground
-import com.example.compose.SHBackgroundDark
-import com.example.compose.SHError
-import com.example.compose.SHOnPrimary
-import com.example.compose.SHOnPrimaryDark
-import com.example.compose.SHOnSurface
-import com.example.compose.SHPrimary
-import com.example.compose.SHPrimaryContainer
-import com.example.compose.SHPrimaryDark
-import com.example.compose.SHSecondary
-import com.example.compose.SHSurface
-import com.example.compose.SHSurfaceDark
-import com.example.compose.backgroundDark
-import com.example.compose.backgroundLight
-import com.example.compose.errorContainerDark
-import com.example.compose.errorContainerLight
-import com.example.compose.errorDark
-import com.example.compose.errorLight
-import com.example.compose.inverseOnSurfaceDark
-import com.example.compose.inverseOnSurfaceLight
-import com.example.compose.inversePrimaryDark
-import com.example.compose.inversePrimaryLight
-import com.example.compose.inverseSurfaceDark
-import com.example.compose.inverseSurfaceLight
-import com.example.compose.onBackgroundDark
-import com.example.compose.onBackgroundLight
-import com.example.compose.onErrorContainerDark
-import com.example.compose.onErrorContainerLight
-import com.example.compose.onErrorDark
-import com.example.compose.onErrorLight
-import com.example.compose.onPrimaryContainerDark
-import com.example.compose.onPrimaryContainerLight
-import com.example.compose.onPrimaryDark
-import com.example.compose.onPrimaryLight
-import com.example.compose.onSecondaryContainerDark
-import com.example.compose.onSecondaryContainerLight
-import com.example.compose.onSecondaryDark
-import com.example.compose.onSecondaryLight
-import com.example.compose.onSurfaceDark
-import com.example.compose.onSurfaceLight
-import com.example.compose.onSurfaceVariantDark
-import com.example.compose.onSurfaceVariantLight
-import com.example.compose.onTertiaryContainerDark
-import com.example.compose.onTertiaryContainerLight
-import com.example.compose.onTertiaryDark
-import com.example.compose.onTertiaryLight
-import com.example.compose.outlineDark
-import com.example.compose.outlineLight
-import com.example.compose.outlineVariantDark
-import com.example.compose.outlineVariantLight
-import com.example.compose.primaryContainerDark
-import com.example.compose.primaryContainerLight
-import com.example.compose.primaryDark
-import com.example.compose.primaryLight
-import com.example.compose.scrimDark
-import com.example.compose.scrimLight
-import com.example.compose.secondaryContainerDark
-import com.example.compose.secondaryContainerLight
-import com.example.compose.secondaryDark
-import com.example.compose.secondaryLight
-import com.example.compose.surfaceBrightDark
-import com.example.compose.surfaceBrightLight
-import com.example.compose.surfaceContainerDark
-import com.example.compose.surfaceContainerHighDark
-import com.example.compose.surfaceContainerHighLight
-import com.example.compose.surfaceContainerHighestDark
-import com.example.compose.surfaceContainerHighestLight
-import com.example.compose.surfaceContainerLight
-import com.example.compose.surfaceContainerLowDark
-import com.example.compose.surfaceContainerLowLight
-import com.example.compose.surfaceContainerLowestDark
-import com.example.compose.surfaceContainerLowestLight
-import com.example.compose.surfaceDark
-import com.example.compose.surfaceDimDark
-import com.example.compose.surfaceDimLight
-import com.example.compose.surfaceLight
-import com.example.compose.surfaceVariantDark
-import com.example.compose.surfaceVariantLight
-import com.example.compose.tertiaryContainerDark
-import com.example.compose.tertiaryContainerLight
-import com.example.compose.tertiaryDark
-import com.example.compose.tertiaryLight
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -172,31 +86,24 @@ private val darkScheme = darkColorScheme(
     surfaceContainerHighest = surfaceContainerHighestDark,
 )
 
-private val LightColorScheme = lightColorScheme(
-    primary = SHPrimary,
-    onPrimary = SHOnPrimary,
-    primaryContainer= SHPrimaryContainer,
-    secondary = SHSecondary,
-    error = SHError,
-    background = SHBackground,
-    surface = SHSurface,
-    onSurface = SHOnSurface,
-)
-private val DarkColorScheme = darkColorScheme(
-    primary = SHPrimaryDark,
-    onPrimary = SHOnPrimaryDark,
-    background = SHBackgroundDark,
-    surface = SHSurfaceDark,
-)
-
 @Composable
 fun SmartHealthMonitorTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    val colorScheme = when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val context = LocalContext.current
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+        darkTheme -> darkScheme
+        else -> lightScheme
+    }
+
     MaterialTheme(
         colorScheme = colorScheme,
+        typography = Typography,
         content = content
     )
 }
