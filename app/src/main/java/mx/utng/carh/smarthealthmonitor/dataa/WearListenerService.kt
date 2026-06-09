@@ -3,7 +3,14 @@ package mx.utng.carh.smarthealthmonitor.dataa
 import android.util.Log
 import com.google.android.gms.wearable.MessageEvent
 import com.google.android.gms.wearable.WearableListenerService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+
 class WearListenerService : WearableListenerService() {
+    private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
     companion object {
         const val PATH_FC = "/smarthealthmonitor/fc";
         const val PATH_PASOS = "/smarthealthmonitor/pasos";
@@ -17,7 +24,9 @@ class WearListenerService : WearableListenerService() {
         when (path) {
             PATH_FC -> {
                 val bpm = data.toIntOrNull() ?: return
-                SmartHealthRepository.actualizarFC(bpm)
+                serviceScope.launch {
+                    SmartHealthRepository.actualizarFC(bpm)
+                }
             }
             PATH_PASOS -> {
                 val pasos = data.toIntOrNull() ?: return
