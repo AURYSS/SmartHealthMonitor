@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.compose) apply false
 }
+
 /*
 dependencies {
      Para los iconos básicos
@@ -11,3 +12,4 @@ dependencies {
     // Para el catálogo completo (aquí es donde vive la mayoría)
     implementation("androidx.compose.material:material-icons-extended")
 }
+*/
