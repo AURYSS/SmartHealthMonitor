@@ -10,20 +10,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,71 +30,65 @@ import mx.utng.carh.smarthealthmonitor.ui.viewmodel.DashboardViewModel
 fun DashboardScreen(
     onHistorialClick: () -> Unit = {},
     onAlertClick: () -> Unit = {},
-    viewModel: DashboardViewModel = viewModel(), // ← inyección automática
+    viewModel: DashboardViewModel = viewModel(),
 ) {
-    // collectAsState() convierte StateFlow en State de Compose
     val fc by viewModel.fc.collectAsState()
     val pasos by viewModel.pasos.collectAsState()
     val historial by viewModel.historial.collectAsState()
     val scope = rememberCoroutineScope()
+    
+    val snackbarHostState = remember { SnackbarHostState() }
+    var mostrarAlerta by remember { mutableStateOf(false) }
 
+    if (mostrarAlerta) {
+        AlertaScreen(
+            fc = fc,
+            onDismiss = { mostrarAlerta = false },
+            onConfirmar = {
+                mostrarAlerta = false
+                scope.launch {
+                    snackbarHostState.showSnackbar(
+                        message = "✅ Alerta enviada a tus contactos de emergencia",
+                        duration = SnackbarDuration.Long
+                    )
+                }
+            }
+        )
+    }
 
     SmartHealthMonitorTheme {
-
         Scaffold(
-
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             topBar = {
-
                 TopAppBar(
-
-                    title = {
-
-                        Text(
-                            text = "SmartHealth",
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                    },
-
+                    title = { Text("SmartHealth Monitor") },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = MaterialTheme.colorScheme.primary,
                         titleContentColor = MaterialTheme.colorScheme.onPrimary
                     )
                 )
             },
-
             floatingActionButton = {
-
                 FloatingActionButton(
-                    onClick = onAlertClick,
+                    onClick = { mostrarAlerta = true },
                     containerColor = MaterialTheme.colorScheme.error
                 ) {
-
                     Icon(
-                        imageVector = Icons.Default.Warning,
+                        Icons.Default.Warning,
                         contentDescription = "Enviar alerta de emergencia",
                         tint = MaterialTheme.colorScheme.onError
                     )
                 }
             }
-
         ) { paddingValues ->
-
-            // paddingValues OBLIGATORIO
             LazyColumn(
-
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
-
                 contentPadding = PaddingValues(16.dp),
-
                 verticalArrangement = Arrangement.spacedBy(12.dp)
-
             ) {
-
-                // ── Tarjeta FC ────────────────────────────
                 item {
-
                     TarjetaDato(
                         valor = fc.toString(),
                         unidad = "bpm",
@@ -114,10 +96,7 @@ fun DashboardScreen(
                         colorValor = MaterialTheme.colorScheme.error
                     )
                 }
-
-                // ── Tarjeta Pasos ─────────────────────────
                 item {
-
                     TarjetaDato(
                         valor = "%,d".format(pasos),
                         unidad = "pasos",
@@ -125,31 +104,25 @@ fun DashboardScreen(
                         colorValor = MaterialTheme.colorScheme.primary
                     )
                 }
-
-                // ── Encabezado historial ──────────────────
                 item {
-
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-
                         Text(
                             text = "Historial reciente",
                             style = MaterialTheme.typography.titleMedium
                         )
-
                         TextButton(onClick = onHistorialClick) {
-
                             Text("Ver todo")
                         }
                     }
                 }
-                item {  // Botón de simulación — SOLO PARA DEBUG
+                item {
                     if (BuildConfig.DEBUG) {
                         OutlinedButton(
-                            onClick = {  // Simular lectura del wearable
+                            onClick = {
                                 scope.launch {
                                     val fcSimulado = (60..110).random()
                                     SmartHealthRepository.actualizarFC(fcSimulado)
@@ -162,10 +135,7 @@ fun DashboardScreen(
                         }
                     }
                 }
-
-                // ── Lista del historial ───────────────────
                 items(historial, key = { it.id }) { lectura ->
-
                     FilaHistorial(lectura = lectura)
                 }
             }
@@ -173,24 +143,10 @@ fun DashboardScreen(
     }
 }
 
-@Preview(
-    showBackground = true,
-    name = "Dashboard - Light",
-    showSystemUi = true,
-    device = "id:pixel_6"
-)
-
-@Preview(
-    showBackground = true,
-    name = "Dashboard - Dark",
-    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
-)
-
+@Preview(showBackground = true, showSystemUi = true, device = "id:pixel_6")
 @Composable
 private fun DashboardScreenPreview() {
-
     SmartHealthMonitorTheme {
-
         DashboardScreen()
     }
 }
