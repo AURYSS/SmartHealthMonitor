@@ -6,6 +6,7 @@ import androidx.health.services.client.PassiveListenerService
 import androidx.health.services.client.data.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.guava.await
+import mx.utng.carh.wear.data.SmartHealthRepository
 
 class HealthDataService : PassiveListenerService() {
 
@@ -21,6 +22,7 @@ class HealthDataService : PassiveListenerService() {
         fcDataPoints.forEach { dataPoint ->
             if (dataPoint is SampleDataPoint<Double>) {
                 val bpm = dataPoint.value.toInt()
+                SmartHealthRepository.actualizarFC(bpm)
                 scope.launch { wearDataSender.enviarFC(bpm) }
             }
         }

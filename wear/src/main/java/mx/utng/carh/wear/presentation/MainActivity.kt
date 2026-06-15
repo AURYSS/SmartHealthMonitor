@@ -10,18 +10,12 @@ import android.hardware.SensorManager
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.wear.compose.material3.*
+import androidx.wear.compose.material.MaterialTheme
 import kotlinx.coroutines.launch
+import mx.utng.carh.wear.data.SmartHealthRepository
 import mx.utng.carh.wear.presentation.theme.HealthDataService
 import mx.utng.carh.wear.presentation.theme.WearDataSender
 
@@ -30,9 +24,6 @@ class MainActivity : ComponentActivity(), SensorEventListener {
     private var heartRateSensor: Sensor? = null
     private lateinit var wearDataSender: WearDataSender
 
-    private var _heartRate = mutableStateOf(0)
-    val heartRate: State<Int> = _heartRate
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
@@ -40,7 +31,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
         heartRateSensor = sensorManager.getDefaultSensor(Sensor.TYPE_HEART_RATE)
         wearDataSender = WearDataSender(this)
 
-        // Registrar Health Services para segundo plano (opcional pero recomendado)
+        // Registrar Health Services para segundo plano
         lifecycleScope.launch {
             try {
                 HealthDataService.registrar(this@MainActivity)
@@ -49,9 +40,16 @@ class MainActivity : ComponentActivity(), SensorEventListener {
             }
         }
 
+        // Solicitar permisos al iniciar para que el sensor funcione
+        checkAndRequestPermissions()
+
         setContent {
-            WearApp(heartRate.value) {
-                checkAndRequestPermissions()
+            MaterialTheme {
+                WearDashboardScreen(
+                    onAlertClick = { 
+                        Log.d("MainActivity", "Botón de alerta presionado")
+                    }
+                )
             }
         }
     }
@@ -90,7 +88,9 @@ class MainActivity : ComponentActivity(), SensorEventListener {
         if (event.sensor.type == Sensor.TYPE_HEART_RATE) {
             val bpm = event.values[0].toInt()
             if (bpm > 0) {
-                _heartRate.value = bpm
+                // Actualizamos el repositorio local que observa el ViewModel
+                SmartHealthRepository.actualizarFC(bpm)
+                // Enviamos los datos al celular
                 lifecycleScope.launch {
                     wearDataSender.enviarFC(bpm)
                 }
@@ -103,37 +103,5 @@ class MainActivity : ComponentActivity(), SensorEventListener {
     override fun onDestroy() {
         super.onDestroy()
         sensorManager.unregisterListener(this)
-    }
-}
-
-@Composable
-fun WearApp(heartRate: Int, onRequestPermission: () -> Unit) {
-    MaterialTheme {
-        AppScaffold {
-            ScreenScaffold { contentPadding ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(contentPadding),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        text = "SmartHealth Monitor",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = if (heartRate > 0) "$heartRate BPM" else "Esperando datos...",
-                        style = MaterialTheme.typography.displayMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = onRequestPermission) {
-                        Text("Activar Sensor")
-                    }
-                }
-            }
-        }
     }
 }
