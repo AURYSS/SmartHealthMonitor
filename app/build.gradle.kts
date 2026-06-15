@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    id("com.google.devtools.ksp") version "2.2.10-2.0.2"
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -31,6 +31,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     buildFeatures {
         compose = true
         buildConfig = true
@@ -70,4 +71,13 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
 
+    // Compose for Wear OS
+    implementation("androidx.wear.compose:compose-material:1.3.1")
+    implementation("androidx.wear.compose:compose-foundation:1.3.1")
+    implementation("androidx.wear.compose:compose-navigation:1.3.1")
+    // Horologist (utilidades Wear OS de Google)
+    implementation("com.google.android.horologist:horologist-compose-layout:0.6.17")
+    implementation("com.google.android.horologist:horologist-compose-material:0.6.17")
+    // Compartir Repository con el módulo app
+    implementation(project(":app"))
 }
