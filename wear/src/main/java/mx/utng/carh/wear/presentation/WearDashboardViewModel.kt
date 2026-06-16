@@ -15,6 +15,6 @@ class WearDashboardViewModel : ViewModel() {
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = 72
+            initialValue = 72,
         )
 }
