@@ -45,11 +45,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
 
         setContent {
             MaterialTheme {
-                WearDashboardScreen(
-                    onAlertClick = { 
-                        Log.d("MainActivity", "Botón de alerta presionado")
-                    }
-                )
+                SmartHealthWearNavGraph()
             }
         }
     }
