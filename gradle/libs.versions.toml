@@ -17,6 +17,7 @@ wearToolingPreview = "1.0.0"
 coreSplashscreen = "1.2.0"
 composeMaterial = "1.6.2"
 composeNavigation = "1.6.2"
+compiler = "3.2.0-alpha11"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -44,6 +45,7 @@ androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscree
 androidx-compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "composeMaterial" }
 androidx-compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "composeNavigation" }
 androidx-compose-icons-core = { group = "androidx.compose.material", name = "material-icons-core" }
+androidx-compiler = { group = "androidx.databinding", name = "compiler", version.ref = "compiler" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
