@@ -17,6 +17,7 @@ import mx.utng.carh.wear.presentation.components.WearFCCard
 @Composable
 fun WearDashboardScreen(
     onAlertClick: () -> Unit = {},
+    onHistorialClick: () -> Unit = {},
     viewModel: WearDashboardViewModel = viewModel()
 ) {
     val fc by viewModel.fc.collectAsState()
@@ -24,7 +25,6 @@ fun WearDashboardScreen(
 
     Scaffold(
         timeText = {
-            // La hora desaparece suavemente al hacer scroll hacia abajo
             TimeText(modifier = Modifier.scrollAway(listState))
         },
         positionIndicator = {
@@ -41,7 +41,6 @@ fun WearDashboardScreen(
                 bottom = 32.dp
             )
         ) {
-            // Card de Ritmo Cardíaco (cambia color según el valor)
             item {
                 WearFCCard(
                     fc = fc,
@@ -49,7 +48,14 @@ fun WearDashboardScreen(
                 )
             }
 
-            // Botón de Alerta
+            item {
+                Chip(
+                    label = { Text("Ver Historial", modifier = Modifier.fillMaxWidth()) },
+                    onClick = onHistorialClick,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
             item {
                 Chip(
                     label = { Text("Enviar Alerta", modifier = Modifier.fillMaxWidth()) },

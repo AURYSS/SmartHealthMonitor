@@ -12,6 +12,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import androidx.wear.compose.material.MaterialTheme
 import kotlinx.coroutines.launch
@@ -25,6 +26,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
     private lateinit var wearDataSender: WearDataSender
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
