@@ -10,13 +10,7 @@ import mx.utng.carh.smarthealthmonitor.data.db.LecturaFC
 import mx.utng.carh.smarthealthmonitor.data.db.LecturaFCDao
 import mx.utng.carh.smarthealthmonitor.data.db.SmartHealthDB
 
-/**
- * Repositorio singleton que centraliza los datos de salud.
- * El WearListenerService escribe aquí.
- * El ViewModel lee de aquí.
- */
 object SmartHealthRepository {
-// FC actual del wearable (bpm)
     private val _fcFlow = MutableStateFlow(0)
     val fcFlow: StateFlow<Int> = _fcFlow.asStateFlow()
 
@@ -24,12 +18,13 @@ object SmartHealthRepository {
     val pasosFlow: StateFlow<Int> = _pasosFlow.asStateFlow()
 
     private var dao: LecturaFCDao? = null
+
     fun init(context: Context) {
         dao = SmartHealthDB.getDatabase(context).lecturaDao()
     }
+
     suspend fun actualizarFC(bpm: Int) {
         _fcFlow.value = bpm
-    // Persistir en Room automáticamente
         dao?.insertar(LecturaFC(valorBpm = bpm))
     }
 
@@ -37,8 +32,6 @@ object SmartHealthRepository {
         _pasosFlow.value = pasos
     }
 
-    // Flow del historial desde Room
     fun obtenerHistorial(): Flow<List<LecturaFC>> =
-    dao?.obtenerUltimas() ?: emptyFlow()
+        dao?.obtenerUltimas() ?: emptyFlow()
 }
-
