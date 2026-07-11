@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,14 +31,18 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+
 @Composable
 fun TvDetailScreen(
-    lecturaId   : Int,
+    lecturaId: Int,
     navController: NavController,
-    viewModel   : TvViewModel = viewModel(factory=TvViewModelFactory(LocalContext.current))
+    viewModel: TvViewModel = viewModel()
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
-    val lectura = state.lecturas.find { it.id == lecturaId } ?: return
+    val lecturas by viewModel.historial.collectAsStateWithLifecycle()
+    val lectura = lecturas.find { it.id == lecturaId } ?: return
 
     // FocusRequester para mover el foco al primer botón al entrar
     val firstBtnFocus = remember { FocusRequester() }
@@ -49,18 +52,18 @@ fun TvDetailScreen(
         horizontalArrangement = Arrangement.spacedBy(48.dp)) {
 
         // Panel izquierdo — ícono + datos
-        Column(Modifier.weight(0.4f), verticalArrangement=Arrangement.spacedBy(16.dp)) {
-            Box(Modifier.size(200.dp).background(Color(0xFF1565C0),CircleShape),
-                contentAlignment= Alignment.Center) {
-                Text("❤", fontSize=80.sp)
+        Column(Modifier.weight(0.4f), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            Box(Modifier.size(200.dp).background(Color(0xFF1565C0), CircleShape),
+                contentAlignment = Alignment.Center) {
+                Text("❤", fontSize = 80.sp)
             }
-            Text("${lectura.bpm} bpm",
-                style=MaterialTheme.typography.displayMedium,
-                color=Color.White, fontWeight= FontWeight.ExtraBold)
-            Text("Estado: ${lectura.estado}",
-                style=MaterialTheme.typography.bodyLarge, color=Color.White.copy(0.8f))
+            Text("${lectura.valorBpm} bpm",
+                style = MaterialTheme.typography.displayMedium,
+                color = Color.White, fontWeight = FontWeight.ExtraBold)
+            Text("Estado: ${if (lectura.esNormal) "Normal" else "Alerta"}",
+                style = MaterialTheme.typography.bodyLarge, color = Color.White.copy(0.8f))
             Text("Hora: ${lectura.hora}",
-                style=MaterialTheme.typography.bodyMedium, color=Color.White.copy(0.6f))
+                style = MaterialTheme.typography.bodyMedium, color = Color.White.copy(0.6f))
         }
 
         // Panel derecho — botones de acción
