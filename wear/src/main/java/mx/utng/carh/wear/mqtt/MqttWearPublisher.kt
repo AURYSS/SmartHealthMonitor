@@ -3,6 +3,7 @@ package mx.utng.carh.wear.mqtt
 import android.content.Context
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import mx.utng.carh.smarthealthmonitor.mqtt.*
 import org.eclipse.paho.client.mqttv3.*
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
 import javax.net.ssl.SSLSocketFactory
@@ -14,14 +15,14 @@ class MqttWearPublisher(private val context: Context) {
     fun connect() {
         try {
             client = MqttAsyncClient(
-                MqttConfig.BROKER_URL,
-                MqttConfig.CLIENT_WEAR,
+                MqttSharedConfig.BROKER_URL,
+                MqttSharedConfig.CLIENT_WEAR,
                 MemoryPersistence()
             )
 
             val options = MqttConnectOptions().apply {
-                userName = MqttConfig.USERNAME
-                password = MqttConfig.PASSWORD.toCharArray()
+                userName = MqttSharedConfig.USERNAME
+                password = MqttSharedConfig.PASSWORD.toCharArray()
                 isCleanSession = true
                 connectionTimeout = 30
                 keepAliveInterval = 60
@@ -37,7 +38,7 @@ class MqttWearPublisher(private val context: Context) {
                     android.util.Log.e("MQTT_WEAR", "❌ Error de conexión: ${ex?.message}")
                 }
             })
-        } catch (e: MqttException) {
+        } catch (e: Exception) {
             android.util.Log.e("MQTT_WEAR", "❌ Error al configurar MQTT: ${e.message}")
         }
     }
@@ -46,18 +47,18 @@ class MqttWearPublisher(private val context: Context) {
     fun publishFC(bpm: Int, estado: String) {
         if (client?.isConnected != true) return
 
-        val message = FcMessage(bpm = bpm, estado = estado)
-        val payload = Json.encodeToString(message).toByteArray()
-
-        val mqttMessage = MqttMessage(payload).apply {
-            qos = MqttConfig.QOS
-            isRetained = true // el TV verá el último valor al conectarse
-        }
-
         try {
-            client?.publish(MqttConfig.TOPIC_FC, mqttMessage)
-            android.util.Log.d("MQTT_WEAR", "📤 Publicado: $bpm bpm -> ${MqttConfig.TOPIC_FC}")
-        } catch (e: MqttException) {
+            val message = FcMessage(bpm = bpm, estado = estado)
+            val payload = Json.encodeToString(message).toByteArray()
+
+            val mqttMessage = MqttMessage(payload).apply {
+                qos = MqttSharedConfig.QOS
+                isRetained = true // el TV verá el último valor al conectarse
+            }
+
+            client?.publish(MqttSharedConfig.TOPIC_FC, mqttMessage)
+            android.util.Log.d("MQTT_WEAR", "📤 Publicado: $bpm bpm -> ${MqttSharedConfig.TOPIC_FC}")
+        } catch (e: Exception) {
             android.util.Log.e("MQTT_WEAR", "❌ Error al publicar: ${e.message}")
         }
     }
@@ -65,7 +66,7 @@ class MqttWearPublisher(private val context: Context) {
     fun disconnect() {
         try {
             client?.disconnect()
-        } catch (e: MqttException) {
+        } catch (e: Exception) {
             android.util.Log.e("MQTT_WEAR", "❌ Error al desconectar: ${e.message}")
         }
     }
