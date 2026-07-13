@@ -1,6 +1,6 @@
 package mx.utng.carh.smarthealthmonitor.dashboard
 
-import android.app.MediaRouteButton
+import androidx.mediarouter.app.MediaRouteButton
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
