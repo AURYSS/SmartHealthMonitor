@@ -38,6 +38,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":shared"))
     implementation(libs.androidx.compiler)
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.compose.navigation)
