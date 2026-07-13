@@ -23,7 +23,7 @@ import androidx.wear.compose.material.scrollAway
 @Composable
 fun WearHistorialScreen(
     onBack: () -> Unit,
-    viewModel: WearDashboardViewModel = viewModel()
+    viewModel: WearViewModel = viewModel()
 ) {
     val historial by viewModel.historial.collectAsState()
     val listState = rememberScalingLazyListState()

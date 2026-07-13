@@ -18,7 +18,7 @@ import mx.utng.carh.wear.presentation.components.WearFCCard
 fun WearDashboardScreen(
     onAlertClick: () -> Unit = {},
     onHistorialClick: () -> Unit = {},
-    viewModel: WearDashboardViewModel = viewModel()
+    viewModel: WearViewModel = viewModel()
 ) {
     val fc by viewModel.fc.collectAsState()
     val listState = rememberScalingLazyListState()

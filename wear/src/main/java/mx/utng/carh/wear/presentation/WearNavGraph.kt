@@ -39,7 +39,7 @@ fun SmartHealthWearNavGraph() {
         }
         
         composable(WearScreens.ALERTA) {
-            val vm: WearDashboardViewModel = viewModel()
+            val vm: WearViewModel = viewModel()
             val fc by vm.fc.collectAsState()
             WearAlertaScreen(
                 fc = fc,
