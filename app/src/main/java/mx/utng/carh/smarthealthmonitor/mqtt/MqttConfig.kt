@@ -1,6 +1,6 @@
 package mx.utng.carh.smarthealthmonitor.mqtt
 
-object xMqttConfig {
+object MqttConfig {
     // ⚠️ Reemplaza con los datos de TU cluster HiveMQ
     const val BROKER_URL  = "ssl://b85e90b2108c453793af746ddfb91a3e.s1.eu.hivemq.cloud:8883"
     const val USERNAME    = "aurora_robelo"  // del Access Management
