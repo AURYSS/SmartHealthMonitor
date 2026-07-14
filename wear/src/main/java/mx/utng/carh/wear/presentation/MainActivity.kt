@@ -53,10 +53,21 @@ class MainActivity : ComponentActivity(), SensorEventListener {
     }
 
     private fun checkAndRequestPermissions() {
-        val permissions = arrayOf(
+        val permissions = mutableListOf(
             Manifest.permission.BODY_SENSORS,
             Manifest.permission.ACTIVITY_RECOGNITION
         )
+        
+        // Permiso de segundo plano para Wear OS 3+ (API 33+)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            permissions.add(Manifest.permission.BODY_SENSORS_BACKGROUND)
+        }
+
+        // Permiso de Salud para API 34+ (según tus logs)
+        if (android.os.Build.VERSION.SDK_INT >= 34) {
+            permissions.add("android.permission.health.READ_HEART_RATE")
+        }
+
         val allGranted = permissions.all {
             ContextCompat.checkSelfPermission(this, it) == PackageManager.PERMISSION_GRANTED
         }
@@ -64,7 +75,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
         if (allGranted) {
             registerSensor()
         } else {
-            requestPermissions(permissions, 100)
+            requestPermissions(permissions.toTypedArray(), 100)
         }
     }
 
