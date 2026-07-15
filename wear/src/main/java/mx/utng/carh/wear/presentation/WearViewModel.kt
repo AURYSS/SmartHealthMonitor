@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import mx.utng.carh.wear.data.SmartHealthRepository
+import mx.utng.carh.wear.data.WearNeonRepository
 import mx.utng.carh.wear.mqtt.MqttWearPublisher
 
 // Clase temporal para que compile hasta tener Room en Wear
@@ -22,19 +23,30 @@ data class LecturaFC(
 
 class WearViewModel(application: Application) : AndroidViewModel(application) {
     private val mqttPublisher = MqttWearPublisher(application)
+    private val neonRepo = WearNeonRepository()
 
     init {
         mqttPublisher.connect()
         viewModelScope.launch {
             SmartHealthRepository.fcFlow.collect { bpm ->
                 if (bpm > 0) {
-                    // Publicar FC vía MQTT cada vez que cambia
                     val estado = when {
                         bpm < 60 -> "FC Baja"
                         bpm > 100 -> "FC Alta"
                         else -> "Normal"
                     }
+                    
+                    // 1. Publicar vía MQTT
                     mqttPublisher.publishFC(bpm, estado)
+                    
+                    // 2. Publicar a Neon (en IO thread)
+                    launch(kotlinx.coroutines.Dispatchers.IO) {
+                        try {
+                            neonRepo.publicarLectura(bpm, estado)
+                        } catch (e: Exception) {
+                            android.util.Log.w("WEAR", "Sin red Neon: ${e.message}")
+                        }
+                    }
                 }
             }
         }
