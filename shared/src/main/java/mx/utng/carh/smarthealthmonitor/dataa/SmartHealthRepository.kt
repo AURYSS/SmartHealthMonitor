@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.emptyFlow
 import mx.utng.carh.smarthealthmonitor.data.db.LecturaFC
 import mx.utng.carh.smarthealthmonitor.data.db.LecturaFCDao
 import mx.utng.carh.smarthealthmonitor.data.db.SmartHealthDB
+import mx.utng.carh.smarthealthmonitor.data.NeonDatabaseManager
 
 object SmartHealthRepository {
     private val _fcFlow = MutableStateFlow(0)
@@ -25,7 +26,10 @@ object SmartHealthRepository {
 
     suspend fun actualizarFC(bpm: Int) {
         _fcFlow.value = bpm
+        // Guardar en Room (local)
         dao?.insertar(LecturaFC(valorBpm = bpm))
+        // Guardar en Neon (remoto)
+        NeonDatabaseManager.insertarLecturaFC(bpm)
     }
 
     fun actualizarPasos(pasos: Int) {
