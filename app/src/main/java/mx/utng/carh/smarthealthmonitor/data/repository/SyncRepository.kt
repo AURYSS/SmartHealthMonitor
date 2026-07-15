@@ -45,7 +45,7 @@ class SyncRepository(
                 request = NeonRequest(
                     query = """INSERT INTO lecturas_fc (bpm, estado, dispositivo, hora)
                                VALUES ($1, $2, $3, $4) RETURNING id""".trimIndent(),
-                    params = listOf(lectura.valorBpm, lectura.estado, lectura.dispositivo, lectura.hora)
+                    params = listOf(lectura.bpm, lectura.estado, lectura.dispositivo, lectura.hora)
                 )
             )
         }
@@ -71,7 +71,7 @@ class SyncRepository(
                 dao.upsert(
                     LecturaFC(
                         id = dto.id,
-                        valorBpm = dto.bpm,
+                        bpm = dto.bpm,
                         estado = dto.estado,
                         dispositivo = dto.dispositivo,
                         hora = dto.hora,

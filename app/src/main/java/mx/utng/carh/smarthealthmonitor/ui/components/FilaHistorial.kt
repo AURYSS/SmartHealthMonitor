@@ -26,12 +26,12 @@ fun FilaHistorial(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        // Valor FC con color según si es normal o no
+        // Valor FC con color según el estado
         Text(
-            text = "${lectura.valorBpm} bpm",
+            text = "${lectura.bpm} bpm",
             style = MaterialTheme.typography.bodyLarge,
             fontWeight = FontWeight.Medium,
-            color = if (lectura.esNormal)
+            color = if (lectura.estado == "Normal")
                 MaterialTheme.colorScheme.onSurface
             else
                 MaterialTheme.colorScheme.error
