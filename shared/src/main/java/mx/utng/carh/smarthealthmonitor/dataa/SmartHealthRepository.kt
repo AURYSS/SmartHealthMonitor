@@ -26,10 +26,26 @@ object SmartHealthRepository {
 
     suspend fun actualizarFC(bpm: Int) {
         _fcFlow.value = bpm
+        
+        val sdf = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
+        val horaActual = sdf.format(java.util.Date())
+        val estado = when {
+            bpm > 100 -> "FC Alta"
+            bpm < 60 -> "FC Baja"
+            else -> "Normal"
+        }
+
         // Guardar en Room (local)
-        dao?.insertar(LecturaFC(valorBpm = bpm))
+        dao?.insertar(LecturaFC(
+            bpm = bpm,
+            estado = estado,
+            dispositivo = "app",
+            hora = horaActual,
+            sincronizado = false
+        ))
+        
         // Guardar en Neon (remoto)
-        NeonDatabaseManager.insertarLecturaFC(bpm)
+        NeonDatabaseManager.insertarLecturaFC(bpm, "app")
     }
 
     fun actualizarPasos(pasos: Int) {
@@ -37,5 +53,5 @@ object SmartHealthRepository {
     }
 
     fun obtenerHistorial(): Flow<List<LecturaFC>> =
-        dao?.obtenerUltimas() ?: emptyFlow()
+        dao?.obtenerTodas() ?: emptyFlow()
 }
