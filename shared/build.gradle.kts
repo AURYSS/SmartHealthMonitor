@@ -28,4 +28,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    
+    // Versión antigua pero más compatible con el runtime de Android
+    implementation("org.postgresql:postgresql:42.2.5")
 }
