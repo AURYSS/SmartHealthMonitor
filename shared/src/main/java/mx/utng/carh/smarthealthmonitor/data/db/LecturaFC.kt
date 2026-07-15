@@ -10,5 +10,8 @@ data class LecturaFC(
     val valorBpm: Int,
     val timestamp: Long = System.currentTimeMillis(),
     val hora: String = "",
+    val estado: String = "Normal",
+    val dispositivo: String = "app",
+    val sincronizado: Boolean = false,
     val esNormal: Boolean = valorBpm in 60..100
 )
